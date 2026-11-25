@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blue Dot</title>
+<meta name="description" content="Blue Dot">
+<meta name="theme-color" content="#0B0D12">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preload" href="fonts/inter_latin_variable.woff2" as="font" type="font/woff2" crossorigin>
+<!--
+  Landing de blue-dot.es · versión 06 (ideas de Fra, aprobadas por Corporativa el 25/11/2026).
+  Regla: sin texto, en el centro, la forma es un círculo (lo esencial de la vida); con el
+  texto, como punto final, es un cuadrado (el píxel, lo esencial de lo digital). La forma
+  solo cambia mientras se desplaza en diagonal, nunca estando quieta.
+  Con el círculo solo no se ve nada más: el texto, el correo y el pie entran y salen juntos.
+-->
+<style>
+  @font-face {
+    font-family: "Inter";
+    src: url("fonts/inter_latin_variable.woff2") format("woff2");
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  :root {
+    --bg: #0B0D12;
+    --blue: #2DA5FB;
+    --text: #E8EAEE;
+    --muted: #8A909C;
+    --faint: #7A808C;
+    --shift-x: 0px;   /* lo calcula el script: del punto final al centro */
+    --shift-y: 0px;
+    --loop: 12s;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow: hidden;
+  }
+
+  main {
+    display: grid;
+    place-items: center;
+    padding: 0 16px;
+  }
+
+  .name {
+    font-weight: 300;
+    font-size: clamp(44px, 8vw, 96px);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .word {
+    opacity: 0;
+    animation: word var(--loop) ease-in-out 1.6s infinite;
+  }
+
+  /* El punto final: también es la forma que cambia entre círculo y cuadrado. */
+  .dot {
+    display: inline-block;
+    width: 0.2em;
+    height: 0.2em;
+    margin-left: 0.07em;
+    background: var(--blue);
+    border-radius: 50%;
+    vertical-align: baseline;
+    opacity: 0;
+    transform: translate(var(--shift-x), var(--shift-y)) scale(0.05);
+    animation:
+      appear 1.6s cubic-bezier(0.22, 0.61, 0.36, 1) forwards,
+      loop var(--loop) cubic-bezier(0.65, 0, 0.35, 1) 1.6s infinite;
+  }
+
+  footer {
+    padding: 0 16px 22px;
+    text-align: center;
+    font-size: 11px;
+    line-height: 1.7;
+    color: var(--faint);
+    opacity: 0;
+    /* Versión 06 (Fra): el pie entra y sale a la vez que «blue dot»; con el círculo solo,
+       la pantalla queda negra. Al pasar el ratón o con el teclado, el pie se ve siempre. */
+    animation: word var(--loop) ease-in-out 1.6s infinite;
+  }
+  footer:hover, footer:focus-within { animation: none; opacity: 1; }
+  footer a { color: var(--muted); text-decoration: none; }
+  footer a:hover, footer a:focus-visible { color: var(--blue); }
+  .contact { display: block; margin-bottom: 6px; font-size: 12px; }
+  .nw { white-space: nowrap; }
+
+  /* Entrada: un punto diminuto que crece hasta el círculo, en el centro de la pantalla. */
+  @keyframes appear {
+    from { opacity: 0; border-radius: 50%; transform: translate(var(--shift-x), var(--shift-y)) scale(0.05); }
+    to   { opacity: 1; border-radius: 50%; transform: translate(var(--shift-x), var(--shift-y)) scale(1); }
+  }
+
+  /* Bucle de 12 s (Corporativa, 25/11). Forma y posición cambian a la vez:
+      0–7 %   círculo solo, en el centro
+      7–25 %  viaja al final de la palabra y se hace cuadrado
+     25–66 %  «blue dot■» quieto
+     66–84 %  vuelve al centro y se redondea
+     84–100 % círculo solo                                                 */
+  @keyframes loop {
+    0%, 7%    { opacity: 1; border-radius: 50%; transform: translate(var(--shift-x), var(--shift-y)); }
+    25%, 66%  { opacity: 1; border-radius: 0;   transform: translate(0, 0); }
+    84%, 100% { opacity: 1; border-radius: 50%; transform: translate(var(--shift-x), var(--shift-y)); }
+  }
+
+  /* Texto: termina de entrar justo cuando llega el cuadrado; sale al empezar la vuelta. */
+  @keyframes word {
+    0%, 15%   { opacity: 0; }
+    27%, 66%  { opacity: 1; }
+    76%, 100% { opacity: 0; }
+  }
+
+
+  /* Sin animación: «blue dot■» quieto, con el cuadrado (el estado con texto). */
+  @media (prefers-reduced-motion: reduce) {
+    .dot, .word, footer { animation: none; opacity: 1; }
+    .dot { transform: none; border-radius: 0; }
+  }
+</style>
+</head>
+<body>
+  <main>
+    <h1 class="name" aria-label="Blue Dot"><span class="word">blue dot</span><span class="dot" aria-hidden="true"></span></h1>
+  </main>
+  <footer>
+    <a class="contact" href="mailto:projects@blue-dot.es">projects@blue-dot.es</a>
+    BLUE DOT LAB, S.L.U. · NIF B05957428 · C/ de Mèxic 19, local, 08004 Barcelona ·
+    Registro Mercantil de Barcelona, <span class="nw">hoja B-667265</span>, inscripción 1.ª
+  </footer>
+  <script>
+    // Calcula cuánto hay que mover el punto para que, cuando está solo, quede en el
+    // centro de la pantalla (y a media altura del texto). Sin script, no se desplaza.
+    (function () {
+      var dot = document.querySelector('.dot');
+      var name = document.querySelector('.name');
+      var root = document.documentElement;
+      function measure() {
+        root.style.setProperty('--shift-x', '0px');
+        root.style.setProperty('--shift-y', '0px');
+        var prev = dot.style.animation;
+        dot.style.animation = 'none';
+        dot.style.transform = 'none';
+        var d = dot.getBoundingClientRect();
+        var n = name.getBoundingClientRect();
+        dot.style.transform = '';
+        dot.style.animation = prev;
+        var dx = (window.innerWidth / 2) - (d.left + d.width / 2);
+        var dy = (n.top + n.height / 2) - (d.top + d.height / 2);
+        root.style.setProperty('--shift-x', dx.toFixed(1) + 'px');
+        root.style.setProperty('--shift-y', dy.toFixed(1) + 'px');
+      }
+      (document.fonts ? document.fonts.ready : Promise.resolve()).then(measure);
+      window.addEventListener('resize', measure);
+    })();
+  </script>
+</body>
+</html>
